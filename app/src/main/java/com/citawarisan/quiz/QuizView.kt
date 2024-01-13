@@ -1,6 +1,6 @@
 package com.citawarisan.quiz
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
@@ -32,6 +33,7 @@ import kotlin.concurrent.thread
 
 @Composable
 fun QuizView(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     var data by remember { mutableStateOf(JSONObject()) }
     var correct by remember { mutableIntStateOf(0) }
     var total by remember { mutableIntStateOf(0) }
@@ -71,7 +73,9 @@ fun QuizView(modifier: Modifier = Modifier) {
         if (data.length() == 0) {
             Spacer(modifier = modifier.weight(1.0f))
             CircularProgressIndicator(
-                modifier = Modifier.width(64.dp).padding(16.dp),
+                modifier = Modifier
+                    .width(64.dp)
+                    .padding(16.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
@@ -112,8 +116,9 @@ fun QuizView(modifier: Modifier = Modifier) {
                             }
                             total++
                             data = JSONObject()
+                            Toast.makeText(context, "Answer: $correctAnswer", Toast.LENGTH_SHORT)
+                                .show()
                             getQuestion()
-                            Log.d("to", "getting")
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(answer) }
