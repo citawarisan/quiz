@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,19 +42,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.quizapp.profile.ProfileScreen
-import com.google.android.gms.auth.api.identity.Identity
 import com.example.quizapp.sign_in.GoogleAuthUiClient
 import com.example.quizapp.sign_in.SignInScreen
 import com.example.quizapp.sign_in.SignInViewModel
 import com.example.quizapp.sign_in.UserData
 import com.example.quizapp.ui.theme.QuizAppTheme
+import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import kotlinx.coroutines.launch
-
 
 class MainActivity : ComponentActivity() {
     private val googleAuthUiClient by lazy {
@@ -65,6 +62,7 @@ class MainActivity : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext)
         )
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -127,7 +125,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("profile") {
                             ProfileScreen(
-                                onGoBack= {navController.popBackStack()},
+                                onGoBack = { navController.popBackStack() },
                                 userData = googleAuthUiClient.getSignedInUser(),
                                 onSignOut = {
                                     lifecycleScope.launch {
@@ -147,9 +145,10 @@ class MainActivity : ComponentActivity() {
                                 userData = googleAuthUiClient.getSignedInUser(),
                                 navController = navController,
 
-                            )
+                                )
                         }
-                        composable("finalScore?score={score}",
+                        composable(
+                            "finalScore?score={score}",
                             arguments = listOf(navArgument("score") { type = NavType.IntType })
                         ) {
                             val score = it.arguments?.getInt("score") ?: 0
@@ -157,7 +156,7 @@ class MainActivity : ComponentActivity() {
                                 userData = googleAuthUiClient.getSignedInUser(),
                                 navController = navController,
                                 finalScore = score,
-                                )
+                            )
                         }
                     }
                 }
@@ -170,13 +169,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(
-    userData:UserData?,
+    userData: UserData?,
     navController: NavHostController,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Quiz") },
-                navigationIcon= {
+                navigationIcon = {
                     ElevatedButton(onClick = { navController.navigate("profile") }) {
                         Text(userData?.username.toString())
                     }
@@ -186,17 +186,19 @@ fun HomePage(
         }
     ) { innerPadding ->
         QuizView(
-            userData =userData,
+            userData = userData,
             navController = navController,
             modifier = modifier.padding(innerPadding)
         )
     }
 }
+
 @Composable
 fun FinalScoreScreen(
     userData: UserData?,
     navController: NavHostController,
-    finalScore: Int, modifier: Modifier = Modifier) {
+    finalScore: Int, modifier: Modifier = Modifier
+) {
     //TODO: CHANGE THE FIREBASE URL OR IF YOU WANT TO USE MINE THEN FINE
     val database = Firebase.database("FirebaseUrl")
     val myRef = database.getReference(userData?.userId.toString())
